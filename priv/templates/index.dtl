@@ -1,0 +1,43 @@
+<!doctype html>
+
+<html lang="en">
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<style>
+pre {
+    font-family: 'Fira Mono', 'Source Code Pro', 'Cascadia Mono', monospace;
+    border: solid 15px black;
+    border-radius: 5px;
+}
+
+.cursor {
+    background: white;
+    animation: blink .75s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+.cursor-smooth-move {
+    transition: transform 0.15s cubic-bezier(0,.4,.45,.90);
+}
+
+@keyframes blink {
+    from {
+        opacity: 0.9;
+    }
+    to {
+        opacity: 0.1;
+    }
+}
+
+</style>
+
+<title>Terminal Demo</title>
+
+<pre id="terminal">JavaScript is required for this page.</div>
+
+<script>{{ runtime_contents|safe }}</script>
+<script src="/static/dist/{{ mainjs }}"></script>
+
+</html>

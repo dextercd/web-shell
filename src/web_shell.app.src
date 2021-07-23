@@ -1,0 +1,16 @@
+{application, web_shell,
+ [{description, "An OTP application"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {mod, {web_shell_app, []}},
+  {applications,
+   [kernel,
+    stdlib,
+    sasl,
+    cowboy
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {links, []}
+ ]}.
