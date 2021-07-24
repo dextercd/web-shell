@@ -258,7 +258,6 @@ void process_input()
         int master_fd;
         std::memcpy(&master_fd, read_buffer.get() + 1, sizeof(master_fd));
         //std::memcpy(&pid, read_buffer.get() + 5, sizeof(pid));
-        write_full(master_fd, read_buffer.get() + 9, input_size - 9);
         auto child_it = std::find_if(
             std::begin(child_processes),
             std::end(child_processes),
