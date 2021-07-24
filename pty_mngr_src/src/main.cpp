@@ -368,6 +368,8 @@ void process_child_stops()
             fatal("Couldn't find child process.");
         }
 
+        handle_pty(child_it->master_fd);
+
         close(child_it->master_fd);
         child_processes.erase(child_it);
 
