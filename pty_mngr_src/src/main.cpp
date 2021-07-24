@@ -255,13 +255,18 @@ void process_input()
         write_full(master_fd, read_buffer.get() + 9, input_size - 9);
         // No error handling here because the process may have been stopped already
     } else if (read_buffer[0] == 'k') { // kill
+
         int master_fd;
+        pid_t pid;
         std::memcpy(&master_fd, read_buffer.get() + 1, sizeof(master_fd));
-        //std::memcpy(&pid, read_buffer.get() + 5, sizeof(pid));
+        std::memcpy(&pid, read_buffer.get() + 5, sizeof(pid));
+
         auto child_it = std::find_if(
             std::begin(child_processes),
             std::end(child_processes),
-            [=](auto const& proc) { return proc.master_fd == master_fd; });
+            [=](auto const& proc) {
+                return proc.master_fd == master_fd &&
+                       proc.pid == pid; });
 
         if (child_it != std::end(child_processes)) {
             kill(child_it->pid, SIGTERM);
