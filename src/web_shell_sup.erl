@@ -15,7 +15,7 @@ init([]) ->
     SupFlags = #{strategy => one_for_all,
                  intensity => 2,
                  period => 5},
-    PtyManager = #{id => pty_manager_server, 
+    PtyManager = #{id => pty_manager_server,
                    start => {pty_manager_server, start_link, []}},
     ChildSpecs = [PtyManager],
     {ok, {SupFlags, ChildSpecs}}.

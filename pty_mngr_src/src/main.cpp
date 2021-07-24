@@ -308,7 +308,6 @@ void handle_pty(int master_fd)
         buffer[3] = (message_size >> 0)  & 0xff;
         if (write_full(output_fd, buffer, message_size + 4) == -1)
             fatal("Couldn't write terminal output.");
-
     }
 }
 
