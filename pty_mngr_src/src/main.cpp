@@ -370,6 +370,9 @@ void process_child_stops()
 
         handle_pty(child_it->master_fd);
 
+        if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, child_it->master_fd, nullptr) == -1)
+            fatal("Couldn't deregister from epoll.");
+
         close(child_it->master_fd);
 
         notify_child_stop(*child_it, status);
