@@ -371,9 +371,10 @@ void process_child_stops()
         handle_pty(child_it->master_fd);
 
         close(child_it->master_fd);
-        child_processes.erase(child_it);
 
         notify_child_stop(*child_it, status);
+
+        child_processes.erase(child_it);
     }
 }
 
