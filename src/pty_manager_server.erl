@@ -101,6 +101,10 @@ handle_info({Port, {data, <<MessageType, TerminalId:8/binary, Data/binary>>}},
                       [MessageType, byte_size(Data)]),
             {noreply, State}
     end;
+handle_info({Port, {exit_status, 0}}, State) ->
+    {stop, normal, State};
+handle_info({Port, {exit_status, Status}}, State) ->
+    {stop, {port_error, Status}, State};
 handle_info(Other, State) ->
     io:format("Unhandled message: ~p~n", [Other]),
     {noreply, State}.
