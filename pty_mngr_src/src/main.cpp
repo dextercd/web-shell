@@ -170,21 +170,21 @@ child_process create_pty()
 {
     auto const master_fd = open("/dev/ptmx", O_RDWR | O_CLOEXEC | O_NONBLOCK | O_NOCTTY);
     if (master_fd == -1)
-        return {0, 0};
+        throw std::runtime_error{"Couldn't open /dev/ptmx."};
 
     if (grantpt(master_fd) == -1)
-        return {0, 0};
+        throw std::runtime_error{"grantpt failed"};
 
     if (unlockpt(master_fd) == -1)
-        return {0, 0};
+        throw std::runtime_error{"unlockpt failed"};
 
     auto const pts_name = ptsname(master_fd);
     if (pts_name == nullptr)
-        return {0, 0};
+        throw std::runtime_error{"ptsname failed"};
 
     auto const slave_fd = open(pts_name, O_RDWR | O_NOCTTY);
     if (slave_fd == -1)
-        return {0, 0};
+        throw std::runtime_error{"Couldn't open pts."};
 
     auto const fork_result = fork();
 
@@ -194,7 +194,7 @@ child_process create_pty()
     }
 
     if (fork_result == -1)
-        return {0, 0};
+        throw std::runtime_error{"fork failed."};
 
     // parent
     close(slave_fd);
