@@ -154,7 +154,7 @@ void setup_child(int slave_fd)
         "--memory=200M",
         "--cpus=0.5",
 
-        "guest:v10",
+        "guest:latest",
 
         "/bin/bash",
 
