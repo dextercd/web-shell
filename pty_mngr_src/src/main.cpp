@@ -100,6 +100,9 @@ std::uint32_t read_input_size()
 [[noreturn]]
 void setup_child(int slave_fd)
 {
+    // Don't leak parent process errno into child
+    errno = 0;
+
     setsid();
     ioctl(slave_fd, TIOCSCTTY, 0);
 
