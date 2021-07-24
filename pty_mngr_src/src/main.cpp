@@ -405,7 +405,7 @@ int main()
         fatal("Couldn't register child_stop_fd into epoll.");
 
     while(true) {
-        epoll_event triggered_events[10];
+        epoll_event triggered_events[1];
         auto const wait_result = epoll_wait(
             epoll_fd, triggered_events, std::size(triggered_events), -1);
 
