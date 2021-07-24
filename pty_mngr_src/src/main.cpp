@@ -283,8 +283,13 @@ void handle_pty(int master_fd)
         std::end(child_processes),
         [=](auto const& proc) { return proc.master_fd == master_fd; });
 
-    if (child_it == std::end(child_processes))
+    if (child_it == std::end(child_processes)) {
+        std::cerr << master_fd << "\r\n";
+        for (auto const& ch : child_processes) {
+            std::cerr << "  " << ch.pid << " " << ch.master_fd << "\r\n";
+        }
         fatal("Couldn't find child process");
+    }
 
     auto constexpr read_size = 1024;
     auto constexpr extra_size = 13;
@@ -358,8 +363,10 @@ void process_child_stops()
             std::end(child_processes),
             [=](auto const& proc) { return proc.pid == pid; });
 
-        if (child_it == std::end(child_processes))
+        if (child_it == std::end(child_processes)) {
+            std::cerr << pid << '\n';
             fatal("Couldn't find child process.");
+        }
 
         close(child_it->master_fd);
         child_processes.erase(child_it);
