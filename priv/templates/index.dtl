@@ -35,7 +35,7 @@ pre {
 
 <title>Terminal Demo</title>
 
-<pre id="terminal">JavaScript is required for this page.</div>
+<pre id="terminal"><span style="display:block;padding:0 0 37em;background:black;color:white">JavaScript is required for the terminal.</span></pre>
 
 <script>{{ runtime_contents|safe }}</script>
 <script src="/static/dist/{{ mainjs }}"></script>
