@@ -379,6 +379,7 @@ function applyBracketedPaste(buffer: Uint8Array): Uint8Array {
 }
 
 async function pasteText(text: string) {
+  text.replaceAll('\n', '\r')
   const encoder = new TextEncoder();
   let encodedText = encoder.encode(text);
 
