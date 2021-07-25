@@ -320,7 +320,7 @@ function queueTerminalUpdate() {
 
     terminal.process_done();
     processDataTimout = 0;
-  }, 15);
+  }, 5);
 }
 
 // Listen for messages
