@@ -67,6 +67,15 @@ class BaseTerminal {
     throw Error('Not implemented');
   }
 
+  bracketed_paste_mode(): boolean
+  {
+    if (this.instance === undefined)
+      throw Error('Not initialized');
+
+    const bp = this.instance.exports.bracketed_paste as () => number;
+    return bp() !== 0;
+  }
+
   async init() {
     const importObject = {
       wasi_snapshot_preview1: this.wasi.get_imports(),
@@ -344,21 +353,89 @@ setInterval(() => {
   socket.send(new Uint8Array());
 }, 1000 * 50)
 
+function applyBracketedPaste(buffer: Uint8Array): Uint8Array {
+  const bpAnnotationSize = 6;
+  const resultBuffer = new Uint8Array(buffer.length + bpAnnotationSize * 2)
+
+  // ESC [ 200 ~
+  resultBuffer.set([27, 91, 32, 30, 30, 126], 0)
+
+  let resultIndex = bpAnnotationSize;
+  let inputIndex = 0;
+
+  while (inputIndex != buffer.length) {
+    if (buffer[inputIndex] >= 32) {
+      resultBuffer[resultIndex++] = buffer[inputIndex];
+    }
+
+    ++inputIndex;
+  }
+
+  // ESC [ 201 ~
+  resultBuffer.set([27, 91, 32, 30, 31, 126], resultIndex);
+  resultIndex += bpAnnotationSize;
+
+  return resultBuffer.slice(0, resultIndex)
+}
+
+async function pasteText(text: string) {
+  const encoder = new TextEncoder();
+  let encodedText = encoder.encode(text);
+
+  if (terminal.bracketed_paste_mode())
+    encodedText = applyBracketedPaste(encodedText);
+
+  socket.send(encodedText);
+}
+
+async function pasteClipboard() {
+  const clipboardContents = await navigator.clipboard.readText();
+  await pasteText(clipboardContents);
+}
+
+document.getRootNode().addEventListener('paste', event => {
+  if (!(event instanceof ClipboardEvent))
+    throw new Error('Not a clipboard event')
+
+  if (event.clipboardData === null)
+    throw new Error('Missing clipboard data')
+
+  pasteText(event.clipboardData.getData('text/plain'));
+})
+
 function isCharacterKeyPress(evt: KeyboardEvent) {
   return /^.$/u.test(evt.key);
+}
+
+function hasTextSelected(): boolean {
+  const selection = window.getSelection()
+  if (selection === null)
+    return false;
+
+  return selection.type === 'Range';
 }
 
 document.addEventListener('keydown', event => {
   let data = undefined;
   if (isCharacterKeyPress(event)) {
-    const encoder = new TextEncoder();
-    data = encoder.encode(event.key);
-    if (event.ctrlKey && data.length === 1 && data[0] < 128)
-      data[0] &= 31;
-    if (event.altKey) {
-      const newData = new Uint8Array(data.length);
-      newData[0] = 27;
-      newData.set(data, 1);
+
+    if (event.ctrlKey && ['v', 'V'].includes(event.key)) {
+      // Paste implemented in event handler. Make sure ^V doesn't type
+      // any characters.
+    } else if(event.ctrlKey && ['c', 'C'].includes(event.key) && hasTextSelected()) {
+      // ^C is not forwarded to the terminal if text was selected, since
+      // the user probably wants to copy text from the terminal.
+    } else {
+      const encoder = new TextEncoder();
+      data = encoder.encode(event.key);
+      if (event.ctrlKey && data.length === 1 && data[0] < 128)
+        data[0] &= 31;
+
+      if (event.altKey) {
+        const newData = new Uint8Array(data.length);
+        newData[0] = 27;
+        newData.set(data, 1);
+      }
     }
   } else {
     const conversion: {[key: string]: number[]} = {
