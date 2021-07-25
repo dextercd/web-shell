@@ -42,6 +42,39 @@ struct child_process {
 };
 std::vector<child_process> child_processes;
 
+// Setup the signals. epoll_fd must be initialised before calling this function
+void configure_signals()
+{
+    sigset_t mask;
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGCHLD);
+
+    if (pthread_sigmask(SIG_BLOCK, &mask, nullptr) == -1)
+        fatal("Couldn't block signals.");
+
+    // CLOEXEC so this is automatically closed for spawned children
+    child_stop_fd = signalfd(-1, &mask, SFD_NONBLOCK | SFD_CLOEXEC);
+    if (child_stop_fd == -1)
+        fatal("signalfd failed.");
+
+    if (register_epoll(epoll_fd, child_stop_fd, EPOLLIN) == -1)
+        fatal("Couldn't register child_stop_fd into epoll.");
+
+}
+
+// Restore signal changes for spawned child processes
+void child_restore_signals()
+{
+    // Unblock all signals
+    sigset_t mask;
+    sigemptyset(&mask);
+    if (pthread_sigmask(SIG_SETMASK, &mask, nullptr) == -1)
+        fatal("Couldn't unblock signals.");
+
+    // Reset disposition of SIGPIPE, I think we inherit this from Erlang
+    if (signal(SIGPIPE, SIG_DFL) == SIG_ERR)
+        fatal("Couldn't reset signal disposition.");
+}
 
 // Tries to read exactly `original_count` bytes.
 // Returns -1 if it couldn't read that much data, otherwise returns `original_count`.
@@ -102,6 +135,8 @@ void setup_child(int slave_fd)
 {
     // Don't leak parent process errno into child
     errno = 0;
+
+    child_restore_signals();
 
     setsid();
     ioctl(slave_fd, TIOCSCTTY, 0);
@@ -389,19 +424,7 @@ int main()
     if (register_epoll(epoll_fd, input_fd, EPOLLIN) == -1)
         fatal("Couldn't register input_fd into epoll.");
 
-    sigset_t mask;
-    sigemptyset(&mask);
-    sigaddset(&mask, SIGCHLD);
-
-    if (sigprocmask(SIG_BLOCK, &mask, nullptr) == -1)
-        fatal("Couldn't block signals.");
-
-    child_stop_fd = signalfd(-1, &mask, SFD_NONBLOCK | SFD_CLOEXEC);
-    if (child_stop_fd == -1)
-        fatal("signalfd failed.");
-
-    if (register_epoll(epoll_fd, child_stop_fd, EPOLLIN) == -1)
-        fatal("Couldn't register child_stop_fd into epoll.");
+    configure_signals();
 
     while(true) {
         bool child_terminated = false;
