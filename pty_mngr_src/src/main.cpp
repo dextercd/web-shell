@@ -404,16 +404,18 @@ int main()
         fatal("Couldn't register child_stop_fd into epoll.");
 
     while(true) {
-        epoll_event triggered_events[1];
+        bool child_terminated = false;
+
+        epoll_event triggered_events[10];
         auto const wait_result = epoll_wait(
             epoll_fd, triggered_events, std::size(triggered_events), -1);
 
         if (wait_result == -1) {
             auto const err = errno;
-            if (err == EINTR) {
-                // Interrupts happen, just move on in that case
+
+            // Interrupts happen, just move on in that case
+            if (err == EINTR)
                 continue;
-            }
 
             fatal_with_error("epoll_wait failed.", err);
         }
@@ -424,10 +426,17 @@ int main()
             if (current_event.data.fd == input_fd) {
                 process_input();
             } else if (current_event.data.fd == child_stop_fd) {
-                process_child_stops();
+                // Defer processing to end of loop since we don't want to
+                // deregister children when there are still more events to
+                // process.
+                // Otherwise we're sometimes unable to find the child process.
+                child_terminated = true;
             } else {
                 handle_pty(current_event.data.fd);
             }
         }
+
+        if (child_terminated)
+            process_child_stops();
     }
 }
