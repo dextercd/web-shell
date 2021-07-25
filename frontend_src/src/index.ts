@@ -364,11 +364,12 @@ function applyBracketedPaste(buffer: Uint8Array): Uint8Array {
   let inputIndex = 0;
 
   while (inputIndex != buffer.length) {
-    if (buffer[inputIndex] >= 32) {
-      resultBuffer[resultIndex++] = buffer[inputIndex];
+    const byte = buffer[inputIndex++];
+    if ((byte >= 32) ||
+        (byte >= 9 && byte <= 13))
+    {
+      resultBuffer[resultIndex++] = byte;
     }
-
-    ++inputIndex;
   }
 
   // ESC [ 201 ~
