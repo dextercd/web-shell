@@ -358,7 +358,7 @@ function applyBracketedPaste(buffer: Uint8Array): Uint8Array {
   const resultBuffer = new Uint8Array(buffer.length + bpAnnotationSize * 2)
 
   // ESC [ 200 ~
-  resultBuffer.set([27, 91, 32, 30, 30, 126], 0)
+  resultBuffer.set([27, 91, 50, 48, 48, 126], 0)
 
   let resultIndex = bpAnnotationSize;
   let inputIndex = 0;
@@ -372,7 +372,7 @@ function applyBracketedPaste(buffer: Uint8Array): Uint8Array {
   }
 
   // ESC [ 201 ~
-  resultBuffer.set([27, 91, 32, 30, 31, 126], resultIndex);
+  resultBuffer.set([27, 91, 50, 48, 49, 126], resultIndex);
   resultIndex += bpAnnotationSize;
 
   return resultBuffer.slice(0, resultIndex)
