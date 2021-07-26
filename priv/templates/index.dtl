@@ -38,11 +38,81 @@ pre {
         opacity: 0.1;
     }
 }
+
+article {
+    max-width: 1000px;
+    padding: 20px;
+    margin: 0 auto;
+
+    border-radius: 10px;
+    background: gainsboro;
+}
+
+.margin-top {
+    margin-top: 10px;
+}
 </style>
 
 <title>Terminal Demo</title>
 
 <pre id="terminal"><span style="display:block;padding:0 0 37em;background:black;color:white">JavaScript is required for the terminal.</span></pre>
+
+<article>
+    <h1>Environment</h1>
+
+    <p>
+    The environment that you access in the terminal is a <em>Docker container</em>.
+
+    Each time you visit the page a new container is started,
+    when you leave the page the container is automatically <em>removed</em>.
+    <p>
+
+    <p>
+    Specifically it's a Debian 10 image with some stuff preconfigured and preinstalled:
+    </p>
+
+    <ul>
+        <li>Standard tools:
+        <ul>
+            <li>Standard Unix tools (cat, ls, etc..)
+            <li>Bash
+            <li>SSH
+            <li>tmux
+            <li>Git
+            <li>sqlite3
+            <li>Elinks
+            <li>Vim, Neovim, and of course ed
+        </ul>
+
+        <li class="margin-top">Various languages:
+        <ul>
+            <li>Python 2 and 3
+            <li>Lua, standard interpreter and Luajit
+            <li>R
+            <li>C &amp; C++, through Clang and GCC
+            <li>JavaScript, through Node.js
+            <li>TCL
+            <li>Erlang
+        </ul>
+
+        <li class="margin-top">Build/Packaging tools such as:
+        <ul>
+            <li>GNU Make
+            <li>pip
+            <li>NPM
+            <li>CMake
+            <li>Rebar3
+        </ul>
+
+        <li class="margin-top">Games:
+        <ul>
+            <li>Nethack
+            <li>Sudoku
+            <li>Tetris
+            <li>More! See <code>ls /usr/games</code>
+        </ul>
+    </ul>
+</article>
 
 <script>{{ runtime_contents|safe }}</script>
 <script src="/static/dist/{{ mainjs }}"></script>
