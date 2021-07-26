@@ -283,11 +283,6 @@ if (terminalElement === null)
 const terminal = new DOMTerminal(terminalElement);
 await terminal.init();
 
-const exports = WebAssembly.Module.exports(terminalModule);
-const imports = WebAssembly.Module.imports(terminalModule);
-console.log(exports);
-console.log(imports);
-
 const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
 
 // Create WebSocket connection.
@@ -472,9 +467,9 @@ document.addEventListener('keydown', event => {
 // to manipulate windows. Make sure the user actually wants to leave the site.
 window.addEventListener('beforeunload', function (e) {
     e.preventDefault();
-    e.returnValue = (
+    e.returnValue =
         'Are you sure you want to close the terminal? ' +
-        'Unsaved changes will be lost.');
+        'Unsaved changes will be lost.';
 });
 
 })()
