@@ -22,3 +22,4 @@ pty_mngr_build/
 priv/static/dist/
 priv/static/terminal.wasm
 priv/pty_mngr/
+wasm_terminal_build/
