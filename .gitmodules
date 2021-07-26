@@ -1,0 +1,3 @@
+[submodule "extern/gd100-gdterm"]
+	path = extern/gd100-gdterm
+	url = git@github.com:dextercd/gd100-gdterm.git
