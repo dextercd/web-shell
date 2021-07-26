@@ -1,4 +1,6 @@
-import { WASI } from './wasi'
+import { WASI } from './wasi';
+import term_wasm_name from './generated/wasm-terminal/wasm-terminal.wasm';
+const term_wasm_path = `/static/dist/${term_wasm_name}`;
 
 export class BaseTerminal {
   instance?: WebAssembly.Instance;
@@ -83,7 +85,7 @@ export class BaseTerminal {
     }
 
     const terminalModule =
-      await WebAssembly.compileStreaming(fetch('/static/terminal.wasm'));
+      await WebAssembly.compileStreaming(fetch(term_wasm_path));
 
     this.instance =
       await WebAssembly.instantiate(terminalModule, importObject);
