@@ -12,5 +12,8 @@
         "outDir": "static/dist/",
     },
 
-    "include": ["src/**/*.ts"],
+    "include": [
+        "src/*",
+        "types/*"
+    ],
 }
