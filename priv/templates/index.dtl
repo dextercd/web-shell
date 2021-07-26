@@ -16,6 +16,7 @@ html {
 pre {
     font-family: 'Fira Mono', 'Source Code Pro', 'Cascadia Mono', monospace;
     border: solid 15px black;
+    background: black;
     border-radius: 5px;
 }
 
