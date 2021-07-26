@@ -10,15 +10,6 @@ start(_StartType, _StartArgs) ->
     Dispatch = cowboy_router:compile([
         {'_', [
             {"/", simple_template, index_template},
-
-            % Default nor extended mimetypes have the wasm mime, for simplicity
-            % we just hard code it for this one thing.
-            {"/static/terminal.wasm", cowboy_static,
-                {priv_file, web_shell, "static/terminal.wasm",
-                 [{mimetypes, {<<"application">>, <<"wasm">>, []}}]}},
-
-            {"/static/[...]", cowboy_static, {priv_dir, web_shell, "static"}},
-
             {"/terminal", term_socket, {}}
         ]}
     ]),
