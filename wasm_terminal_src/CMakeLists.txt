@@ -18,7 +18,9 @@ target_include_directories(wasm-terminal
 set_target_properties(wasm-terminal PROPERTIES
     CXX_EXTENSIONS OFF
     CXX_VISIBILITY_PRESET hidden
-    VISIBILITY_INLINES_HIDDEN ON)
+    VISIBILITY_INLINES_HIDDEN ON
+    PREFIX ""
+    SUFFIX ".wasm")
 
 target_compile_features(wasm-terminal
     PRIVATE cxx_std_17)
@@ -28,3 +30,6 @@ target_link_libraries(wasm-terminal
         terminal-interface)
 
 target_link_options(wasm-terminal PUBLIC -Wl,-gc-sections -mexec-model=reactor)
+
+install(TARGETS wasm-terminal
+    DESTINATION "wasm-terminal/")
