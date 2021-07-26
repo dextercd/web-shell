@@ -6,6 +6,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
 <style>
+html { box-sizing: border-box; }
+*, *:before, *:after { box-sizing: inherit; }
+
 pre {
     font-family: 'Fira Mono', 'Source Code Pro', 'Cascadia Mono', monospace;
     border: solid 15px black;
@@ -30,7 +33,6 @@ pre {
         opacity: 0.1;
     }
 }
-
 </style>
 
 <title>Terminal Demo</title>
