@@ -180,7 +180,7 @@ void setup_child(int slave_fd)
         command,
         "run", "--rm", "-ti",
 
-        "--user", "31415926:31415926",
+        "--user", "guest:guest",
         "--workdir", "/home/guest",
         "--hostname", "webshell",
 
