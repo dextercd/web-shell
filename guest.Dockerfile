@@ -99,10 +99,7 @@ RUN echo 'set enable-bracketed-paste on' >/home/guest/.inputrc
 RUN sed -i '1i\color_prompt=yes' /home/guest/.bashrc
 RUN printf "\n\
 export PATH='/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games'\n\
-\n\
-export LC_ALL=en_US.UTF-8\n\
 export LANG=en_US.UTF-8\n\
-export LANGUAGE=en_US.UTF-8\n\
 " >>/home/guest/.bashrc
 
 ADD https://raw.githubusercontent.com/dextercd/dotfiles/master/irregular/.tmux.conf /home/guest/
