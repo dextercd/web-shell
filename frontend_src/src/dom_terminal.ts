@@ -97,9 +97,13 @@ export class DOMTerminal extends BaseTerminal {
   set_cursor(x: number, y: number) {
     if (this.enableCursorAnimation) {
       const smoothMoveClass = 'cursor-smooth-move';
-      if (
-          (this.cursory === y || this.cursorx === x) ||
-          (Math.abs(this.cursory - y) <= 1 && Math.abs(this.cursorx - x) <= 1))
+
+      // Smooth cursor movement is enabled depending on the distance of the
+      // current and new postition.  A larger distance is allowed if the new
+      // position is on the same axis.
+      const distance = Math.abs(this.cursory - y) + Math.abs(this.cursorx - x);
+      if (distance <= 8 && (this.cursory === y || this.cursorx === x) ||
+          distance <= 4)
       {
         this.cursor_element.classList.add(smoothMoveClass);
       } else {
