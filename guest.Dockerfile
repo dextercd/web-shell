@@ -109,7 +109,7 @@ RUN apt-get install         \
     locales
 
 RUN printf "\n\
-en_US.UTF-8 UTF-8\n\
+en_IE.UTF-8 UTF-8\n\
 nl_NL.UTF-8 UTF-8\n\
 " >/etc/locale.gen
 
@@ -130,7 +130,7 @@ ADD https://raw.githubusercontent.com/dextercd/dotfiles/master/irregular/.tmux.c
 RUN chown -R guest:guest /home/guest/
 
 # Env
-ENV LANG=en_US.UTF-8           \
+ENV LANG=en_IE.UTF-8           \
     LC_MONETARY=nl_NL.UTF-8    \
     LC_MEASUREMENT=nl_NL.UTF-8 \
     LC_PAPER=nl_NL.UTF-8       \
