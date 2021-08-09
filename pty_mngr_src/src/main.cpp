@@ -167,18 +167,19 @@ void setup_child(int slave_fd)
             break;
     }
 
+    // Arguments passed into execvp must be writable, so we need an intermediate
+    // mutable array.
+
 #if 0
     char command[] = "fish";
 
-    char* const args[]{
-        command,
-        nullptr,
+    char mutable_args[][20]{
+        "-Cdate" // need this because it can't be an empty arrays
     };
 #else
     char command[] = "docker";
 
-    char* const args[]{
-        command,
+    char mutable_args[][20]{
         "run", "--rm", "-ti",
 
         "--user", "guest:guest",
@@ -193,12 +194,16 @@ void setup_child(int slave_fd)
         "guest:latest",
 
         "/bin/bash",
-
-        nullptr,
     };
 #endif
 
-    execvp(command, args);
+    char* arg_ptrs[std::size(mutable_args) + 2]{command};
+    for (auto i = 0; i != std::size(mutable_args); ++i) {
+        arg_ptrs[i + 1] = mutable_args[i];
+    }
+    arg_ptrs[std::size(arg_ptrs) - 1] = nullptr;
+
+    execvp(command, arg_ptrs);
     fatal("exec call failed.");
 }
 
