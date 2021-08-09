@@ -62,14 +62,14 @@ export class DOMTerminal extends BaseTerminal {
   linesParentElement: HTMLDivElement;
   cursor_element: HTMLSpanElement;
   in_progress_lines: {[key: number]: LineInProgress} = {};
-  enableCursorAnimation: boolean;
+  enableCursorSmoothMove: boolean;
 
   constructor(root_element: HTMLPreElement) {
     super();
 
     // Fixed element translate animation is not working properly
     // on Chrome.  Disable for now.
-    this.enableCursorAnimation = !navigator.userAgent.includes('Chrome');
+    this.enableCursorSmoothMove = !navigator.userAgent.includes('Chrome');
 
     this.root_element = root_element;
     this.root_element.innerHTML = '';
@@ -95,7 +95,7 @@ export class DOMTerminal extends BaseTerminal {
   }
 
   set_cursor(x: number, y: number) {
-    if (this.enableCursorAnimation) {
+    if (this.enableCursorSmoothMove) {
       const smoothMoveClass = 'cursor-smooth-move';
 
       // Smooth cursor movement is enabled depending on the distance of the
