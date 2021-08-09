@@ -17,6 +17,7 @@
 #include <unistd.h>
 
 #include "fatal.hpp"
+#include "unreachable.hpp"
 
 constexpr int input_fd = 0;
 constexpr int output_fd = 1;
@@ -226,6 +227,7 @@ child_process create_pty()
     // child
     if (fork_result == 0) {
         setup_child(slave_fd);
+        PTY_MNGR_UNREACHABLE;
     }
 
     if (fork_result == -1)
