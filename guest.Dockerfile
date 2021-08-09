@@ -24,6 +24,8 @@ COPY wasm_terminal_build/extern/gd100-gdterm/terminfo/g /etc/terminfo/g
 RUN apt-get install         \
     --assume-yes            \
     --no-install-recommends \
+    ca-certificates         \
+    ssh-client              \
     curl                    \
     neofetch                \
     sqlite3                 \
@@ -33,6 +35,15 @@ RUN apt-get install         \
     elinks                  \
     less                    \
     git                     \
+    git-doc                 \
+    git-email               \
+    git-svn                 \
+    patch                   \
+    xdg-user-dirs           \
+    bzip2                   \
+    xz-utils                \
+    manpages                \
+    manpages-dev            \
     man-db
 
 # Text editors
@@ -40,6 +51,7 @@ RUN apt-get install         \
     --assume-yes            \
     --no-install-recommends \
     ed                      \
+    ctags                   \
     neovim                  \
     vim
 
@@ -58,8 +70,16 @@ RUN apt-get install         \
     --no-install-recommends \
     clang                   \
     gcc                     \
+    glibc-doc               \
+    libstdc++-8-doc         \
     gdb                     \
     cmake                   \
+    cmake-doc               \
+    ninja-build             \
+    autoconf                \
+    automake                \
+    make                    \
+    build-essential         \
     binutils
 
 # Python tools
@@ -67,7 +87,9 @@ RUN apt-get install         \
     --assume-yes            \
     --no-install-recommends \
     python3                 \
+    python3-doc             \
     python3-pip             \
+    python3-venv            \
     python3-virtualenv
 
 # Lua tools
