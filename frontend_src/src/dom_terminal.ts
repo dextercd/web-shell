@@ -135,6 +135,7 @@ export class DOMTerminal extends BaseTerminal {
 
       const glyphSpan = document.createElement('span')
       glyphSpan.textContent = ' '.repeat(this.width);
+      glyphSpan.style.backgroundColor = 'black';
 
       lineSpan.appendChild(glyphSpan);
       this.linesParentElement.appendChild(lineSpan);
