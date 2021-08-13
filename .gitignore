@@ -17,9 +17,9 @@ _build
 *.iml
 rebar3.crashdump
 *~
-pty_mngr_build/
 .log/
 priv/static/dist/
-priv/static/terminal.wasm
 priv/pty_mngr/
-wasm_terminal_build/
+
+pty_mngr_build_*/
+wasm_terminal_build_*/
