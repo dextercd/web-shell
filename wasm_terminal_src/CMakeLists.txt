@@ -29,6 +29,8 @@ target_link_libraries(wasm-terminal
     PRIVATE
         terminal-interface)
 
+target_compile_options(wasm-terminal PUBLIC -fno-exceptions)
+
 target_link_options(wasm-terminal PUBLIC -Wl,-gc-sections -mexec-model=reactor)
 
 install(TARGETS wasm-terminal
