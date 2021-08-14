@@ -48,7 +48,7 @@ void push_changes()
 {
     set_size(terminal.screen.size().width, terminal.screen.size().height);
 
-    auto const scroll = terminal.screen.changed_scroll(); 
+    auto const scroll = terminal.screen.changed_scroll();
     if (scroll) {
         set_scroll_change(scroll);
     }
