@@ -29,8 +29,8 @@ class LineInProgress {
 
       (code != 0x20 && (
         fg_r != this.current_style.fg_r ||
-          fg_g != this.current_style.fg_g ||
-          fg_b != this.current_style.fg_b)))
+        fg_g != this.current_style.fg_g ||
+        fg_b != this.current_style.fg_b)))
     {
       const newSpan = document.createElement('span')
       newSpan.style.color = `#${fg_r.toString(16).padStart(2, '0')}${fg_g.toString(16).padStart(2, '0')}${fg_b.toString(16).padStart(2, '0')}`;
