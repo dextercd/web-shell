@@ -96,7 +96,7 @@ RUN apt-get install         \
 RUN apt-get install         \
     --assume-yes            \
     --no-install-recommends \
-    lua5.3                  \
+    lua5.4                  \
     luajit
 
 # TCL tools
