@@ -120,7 +120,8 @@ RUN chmod a+x /usr/local/bin/rebar3
 RUN apt-get install         \
     --assume-yes            \
     --no-install-recommends \
-    nodejs
+    nodejs                  \
+    npm
 
 
 # Configure locales

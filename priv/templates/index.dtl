@@ -98,6 +98,7 @@ article {
         <ul>
             <li>GNU Make
             <li>pip
+            <li>NPM
             <li>CMake
             <li>Rebar3
         </ul>
