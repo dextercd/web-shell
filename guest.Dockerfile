@@ -1,8 +1,8 @@
-FROM debian:buster
+FROM debian:bullseye
 
 
 # Update latest version of packages
-RUN apt-get update && apt-get upgrade && apt-get install --assume-yes --no-install-recommends apt-utils
+RUN apt-get --assume-yes update && apt-get --assume-yes upgrade && apt-get install --assume-yes --no-install-recommends apt-utils
 
 
 # Configure timezone
@@ -51,7 +51,7 @@ RUN apt-get install         \
     --assume-yes            \
     --no-install-recommends \
     ed                      \
-    ctags                   \
+    universal-ctags         \
     neovim                  \
     vim
 
@@ -71,7 +71,7 @@ RUN apt-get install         \
     clang                   \
     gcc                     \
     glibc-doc               \
-    libstdc++-8-doc         \
+    libstdc++-10-doc        \
     gdb                     \
     cmake                   \
     cmake-doc               \
