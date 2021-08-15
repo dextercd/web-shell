@@ -17,7 +17,7 @@ RUN apt-get install         \
     ncurses-bin             \
     ncurses-term
 
-COPY wasm_terminal_build/extern/gd100-gdterm/terminfo/g /etc/terminfo/g
+COPY wasm_terminal_build_release/extern/gd100-gdterm/terminfo/g /etc/terminfo/g
 
 
 # General tools
