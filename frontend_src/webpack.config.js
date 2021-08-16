@@ -14,6 +14,10 @@ module.exports = {
     publicPath: '',
   },
 
+  cache: {
+    type: 'filesystem',
+  },
+
   optimization: {
     // Makes it so the contenthash is actually stable
     runtimeChunk: 'single',

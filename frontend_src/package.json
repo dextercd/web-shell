@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack bundle --mode development --devtool inline-source-map",
-    "build": "webpack bundle --mode production"
+    "build": "webpack bundle --mode production",
+
+    "postinstall": "rm -rf node_modules/.cache/webpack/"
   },
   "author": "Dexter Castor Döpping",
   "license": "UNLICENSED",
