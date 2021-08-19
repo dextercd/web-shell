@@ -28,15 +28,19 @@ priv_file(Paths) ->
     PrivDir = code:priv_dir(web_shell),
     filename:join([PrivDir|Paths]).
 
+resolve_static(PublicPath) ->
+    PrivDir = code:priv_dir(web_shell),
+    iolist_to_binary([PrivDir, PublicPath]).
+
 template_path(Paths) ->
     priv_file(["templates"|Paths]).
 
 index_data() ->
-    {ok, ManifestJson} = file:read_file(priv_file(["static/dist/manifest.json"])),
+    {ok, ManifestJson} = file:read_file(resolve_static(["/static/dist/manifest.json"])),
     Manifest = jsx:decode(ManifestJson),
     MainName = maps:get(<<"main.js">>, Manifest),
     RuntimeName = maps:get(<<"runtime.js">>, Manifest),
-    {ok, RuntimeContents} = file:read_file(priv_file(["static/dist/", RuntimeName])),
+    {ok, RuntimeContents} = file:read_file(resolve_static([RuntimeName])),
     {MainName, RuntimeContents}.
 
 compile_templates() ->

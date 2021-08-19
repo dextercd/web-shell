@@ -8,7 +8,7 @@ module.exports = {
   output: {
     path: __dirname + '/../priv/static/dist',
     clean: true,
-    publicPath: '',
+    publicPath: '/static/dist/',
   },
 
   cache: {

@@ -114,6 +114,6 @@ article {
 </article>
 
 <script>{{ runtime_contents|safe }}</script>
-<script src="/static/dist/{{ mainjs }}"></script>
+<script src="{{ mainjs }}"></script>
 
 </html>

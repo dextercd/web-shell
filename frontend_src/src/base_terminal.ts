@@ -1,6 +1,5 @@
 import { WASI } from './wasi';
-import term_wasm_name from './generated/wasm-terminal/wasm-terminal.wasm';
-const term_wasm_path = `/static/dist/${term_wasm_name}`;
+import term_wasm_path from './generated/wasm-terminal/wasm-terminal.wasm';
 
 export class BaseTerminal {
   instance?: WebAssembly.Instance;
