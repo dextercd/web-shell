@@ -7,9 +7,6 @@ module.exports = {
 
   output: {
     path: __dirname + '/../priv/static/dist',
-
-    filename: '[name].[contenthash:6].js',
-    assetModuleFilename: '[name].[contenthash:6][ext][query]',
     clean: true,
     publicPath: '',
   },
