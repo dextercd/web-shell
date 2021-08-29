@@ -1,6 +1,6 @@
 #include <utility>
 
-#include <gd100/terminal.hpp>
+#include <katerm/terminal.hpp>
 
 [[clang::import_module("terminal")]]
 [[clang::import_name("set_size")]]
@@ -21,9 +21,9 @@ void set_glyph(
 [[clang::import_name("set_cursor")]]
 void set_cursor(int x, int y);
 
-gd100::terminal terminal{{132, 32}};
-gd100::terminal_instructee instructee{&terminal};
-gd100::decoder decoder;
+katerm::terminal terminal{{132, 32}};
+katerm::terminal_instructee instructee{&terminal};
+katerm::decoder decoder;
 
 [[clang::export_name("alloc")]]
 char* alloc(std::size_t count)
@@ -62,7 +62,7 @@ void push_changes()
                 auto const glyph = line_data.glyphs[x];
                 auto style = glyph.style;
 
-                if (style.mode.is_set(gd100::glyph_attr_bit::reversed)) {
+                if (style.mode.is_set(katerm::glyph_attr_bit::reversed)) {
                     std::swap(style.fg, style.bg);
                 }
 
@@ -81,5 +81,5 @@ void push_changes()
 [[clang::export_name("bracketed_paste")]]
 bool bracketed_paste()
 {
-    return terminal.mode.is_set(gd100::terminal_mode_bit::bracketed_paste);
+    return terminal.mode.is_set(katerm::terminal_mode_bit::bracketed_paste);
 }

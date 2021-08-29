@@ -144,7 +144,7 @@ void setup_child(int slave_fd)
 
     close(0); close(1); close(2);
     dup2(slave_fd, 0); dup2(slave_fd, 1); dup2(slave_fd, 2);
-    setenv("TERM", "gdterm", 1);
+    setenv("TERM", "katerm", 1);
 
     std::cout <<
       R"(     xxx          )"  "\n"
@@ -186,7 +186,7 @@ void setup_child(int slave_fd)
         "--workdir", "/home/guest",
         "--hostname", "webshell",
 
-        "-e", "TERM=gdterm",
+        "-e", "TERM=katerm",
 
         "--memory=200M",
         "--cpus=0.5",

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.19)
 
 project(web_terminal_wasm)
 
-add_subdirectory(extern/gd100-gdterm/)
+add_subdirectory(extern/katerm)
 
 add_library(wasm-terminal MODULE
     src/wasm_export.cpp)
