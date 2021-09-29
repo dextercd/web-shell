@@ -13,11 +13,15 @@ html {
     font-family: sans-serif
 }
 
-pre {
+#terminal {
     font-family: 'Fira Mono', 'Source Code Pro', 'Cascadia Mono', monospace;
     border: solid 15px black;
     background: black;
     border-radius: 5px;
+}
+
+#terminal:focus {
+    outline: solid #ff7272;
 }
 
 .cursor {
@@ -55,7 +59,7 @@ article {
 
 <title>Terminal Demo</title>
 
-<pre id="terminal"><span style="display:block;padding:0 0 37em;background:black;color:white">JavaScript is required for the terminal.</span></pre>
+<pre id="terminal" tabindex="0"><span style="display:block;padding:0 0 37em;background:black;color:white">JavaScript is required for the terminal.</span></pre>
 
 <article>
     <h1>Environment</h1>

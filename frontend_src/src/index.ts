@@ -138,10 +138,9 @@ function hasTextSelected(): boolean {
   return selection.type === 'Range';
 }
 
-document.addEventListener('keydown', event => {
+terminalElement.addEventListener('keydown', event => {
   let data = undefined;
   if (isCharacterKeyPress(event)) {
-
     if (event.ctrlKey && ['v', 'V'].includes(event.key)) {
       // Paste implemented in event handler. Make sure ^V doesn't type
       // any characters.
