@@ -50,10 +50,12 @@ function queueTerminalUpdate() {
   processDataTimout = window.setTimeout(function() {
     for (let i = nextToProcess; nextToProcess != received; ++i) {
       const data = backLog[i];
-      delete backLog[i];
 
       if (data === undefined || data === SpecialEntry.InProgress)
         break;
+
+      // Delete entry unless it's an in-progress entry
+      delete backLog[i];
 
       if (data === SpecialEntry.Nothing) {
         // Nothing to do
