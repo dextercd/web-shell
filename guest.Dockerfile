@@ -45,7 +45,8 @@ RUN apt-get install         \
     manpages                \
     manpages-dev            \
     man-db                  \
-    file
+    file                    \
+    shellcheck
 
 # Text editors
 RUN apt-get install         \
