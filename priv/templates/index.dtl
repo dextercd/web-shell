@@ -101,6 +101,7 @@ article {
             <li>JavaScript, through Node.js
             <li>TCL
             <li>Erlang
+            <li>Perl
         </ul>
 
         <li class="margin-top">Build/Packaging tools such as:

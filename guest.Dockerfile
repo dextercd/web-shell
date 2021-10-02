@@ -123,6 +123,14 @@ RUN apt-get install         \
     nodejs                  \
     npm
 
+# Perl
+RUN apt-get install         \
+    --assume-yes            \
+    --no-install-recommends \
+    perl                    \
+    perl-doc                \
+    libterm-readline-perl-perl
+
 
 # Configure locales
 
