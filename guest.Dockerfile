@@ -44,7 +44,8 @@ RUN apt-get install         \
     xz-utils                \
     manpages                \
     manpages-dev            \
-    man-db
+    man-db                  \
+    file
 
 # Text editors
 RUN apt-get install         \
