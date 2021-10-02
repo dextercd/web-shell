@@ -101,11 +101,13 @@ export class DOMTerminal extends BaseTerminal {
   }
 
   getIdealSize() {
-    const rootWidth = this.base_element.offsetWidth;
-    const rootHeight = this.base_element.offsetHeight;
+    const rootRect = this.base_element.getClientRects()[0];
+    const rootWidth = rootRect.width;
+    const rootHeight = rootRect.height;
 
-    const charWidth = this.cursor_element.offsetWidth;
-    const charHeight = this.cursor_element.offsetHeight;
+    const charRect = this.cursor_element.getClientRects()[0];
+    const charWidth = charRect.width;
+    const charHeight = charRect.height;
     return [
       Math.floor(rootWidth / charWidth),
       Math.floor(rootHeight / charHeight)
