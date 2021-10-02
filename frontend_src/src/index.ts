@@ -14,14 +14,34 @@ const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
 // Create WebSocket connection.
 const socket = new WebSocket(`${protocol}://${window.location.host}/terminal`);
 
-// Connection opened
-socket.addEventListener('open', function (event) {});
+function recalculateTerminalSize() {
+  const [width, height] = terminal.getIdealSize()
+  console.log(`Resize request to ${width} by ${height}.`)
+  sendResize(width, height)
+}
 
-let received = 0;
-let nextToProcess = 0;
-let backLog: {[key: number]: Uint8Array} = {}
+const resizeObserver = new ResizeObserver(() => {
+  recalculateTerminalSize()
+})
+
+// Connection opened
+socket.addEventListener('open', function (event) {
+  recalculateTerminalSize()
+  resizeObserver.observe(terminalElement);
+});
+
+enum SpecialEntry {
+  InProgress,
+  Nothing
+}
+
+type LogEntry = Uint8Array | SpecialEntry;
+
+let backLog: {[key: number]: LogEntry} = {}
 
 let processDataTimout = 0;
+let received = 0;
+let nextToProcess = 0;
 
 function queueTerminalUpdate() {
   if (processDataTimout > 0)
@@ -32,10 +52,15 @@ function queueTerminalUpdate() {
       const data = backLog[i];
       delete backLog[i];
 
-      if (data === undefined)
+      if (data === undefined || data === SpecialEntry.InProgress)
         break;
 
-      terminal.process_data(data, false);
+      if (data === SpecialEntry.Nothing) {
+        // Nothing to do
+      } else if (data instanceof Uint8Array) {
+        terminal.process_data(data, false);
+      }
+
       nextToProcess = i + 1;
     }
 
@@ -44,20 +69,50 @@ function queueTerminalUpdate() {
   }, 5);
 }
 
+function handleOutput(current: number, data: Uint8Array) {
+  backLog[current] = data;
+  queueTerminalUpdate();
+}
+
+function handleResize(width: number, height: number) {
+  terminal.resize(width, height);
+  terminal.process_done();
+  console.log(`Resized to ${width} by ${height}.`)
+}
+
+const responseOutput = 111; // o
+const responseResize = 114; // r
+
 // Listen for messages
 socket.addEventListener('message', async function (event) {
   const current = received++;
 
-  // If multiple messages come in at the same time this await may resolve
-  // out of order. We add the item to the backlog and then go through it
-  // in order of what's not yet processed.
+  // If multiple messages come in at the same time this await may resolve out
+  // of order. We reserve an item in the backlog and then reassign it or mark
+  // it as 'nothing' after we know what message we got.
+  backLog[current] = SpecialEntry.InProgress;
 
   const buffer = await event.data.arrayBuffer();
-  const data = new Uint8Array(buffer);
+  const view = new DataView(buffer);
 
-  backLog[current] = data;
+  switch (view.getUint8(0)) {
+    case responseOutput: {
+      handleOutput(current, new Uint8Array(buffer, 1));
+      break;
+    }
 
-  queueTerminalUpdate();
+    case responseResize: {
+      const width = view.getUint32(1)
+      const height = view.getUint32(5)
+      handleResize(width, height);
+      break;
+    }
+  }
+
+  // If we didn't use the entry, mark it as something that can be ignored
+  if (backLog[current] === SpecialEntry.InProgress) {
+    backLog[current] = SpecialEntry.Nothing;
+  }
 });
 
 socket.addEventListener('close', async function (event) {
@@ -68,6 +123,25 @@ socket.addEventListener('close', async function (event) {
   terminal.process_data(data);
   queueTerminalUpdate();
 });
+
+const socketWriteInput = 119; // w
+const socketResizeTerminal = 114; // r
+
+function sendInput(data: Uint8Array) {
+  const buffer = new Uint8Array(data.length + 1);
+  buffer.set([socketWriteInput], 0);
+  buffer.set(data, 1);
+  socket.send(buffer);
+}
+
+function sendResize(width: number, height: number) {
+  const buffer = new ArrayBuffer(1 + 2 * 4);
+  const view = new DataView(buffer);
+  view.setUint8(0, socketResizeTerminal);
+  view.setUint32(1, width);
+  view.setUint32(5, height);
+  socket.send(buffer);
+}
 
 // Periodic ping
 setInterval(() => {
@@ -108,7 +182,7 @@ async function pasteText(text: string) {
   if (terminal.bracketed_paste_mode())
     encodedText = applyBracketedPaste(encodedText);
 
-  socket.send(encodedText);
+  sendInput(encodedText);
 }
 
 async function pasteClipboard() {
@@ -184,7 +258,7 @@ terminalElement.addEventListener('keydown', event => {
 
   if (data !== undefined) {
     event.preventDefault();
-    socket.send(data);
+    sendInput(data);
   }
 })
 

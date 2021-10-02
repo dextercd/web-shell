@@ -63,6 +63,15 @@ export class BaseTerminal {
     throw Error('Not implemented');
   }
 
+  resize(width: number, height: number)
+  {
+    if (this.instance === undefined)
+      throw Error('Not initialized');
+
+    const resz = this.instance.exports.resize as (width: number, height: number) => void;
+    resz(width, height);
+  }
+
   bracketed_paste_mode(): boolean
   {
     if (this.instance === undefined)

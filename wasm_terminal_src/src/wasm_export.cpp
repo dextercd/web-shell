@@ -83,3 +83,9 @@ bool bracketed_paste()
 {
     return terminal.mode.is_set(katerm::terminal_mode_bit::bracketed_paste);
 }
+
+[[clang::export_name("resize")]]
+void resize(int width, int height)
+{
+    terminal.resize({width, height});
+}

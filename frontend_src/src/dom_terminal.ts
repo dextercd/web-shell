@@ -75,6 +75,7 @@ export class DOMTerminal extends BaseTerminal {
     this.root_element.innerHTML = '';
 
     this.base_element = document.createElement('div');
+    this.base_element.id = 'base'
     this.base_element.style.position = 'relative';
 
     this.linesParentElement = document.createElement('div')
@@ -92,6 +93,23 @@ export class DOMTerminal extends BaseTerminal {
 
     this.set_cursor(0, 0);
     this.setup_screen();
+
+    // Need to have a size assigned to make sure that the size is determined by
+    // CSS `resize` functionality.  (Not affected by other changes like resizing
+    // the window.)
+    this.base_element.style.height = `${this.base_element.offsetHeight}px`;
+  }
+
+  getIdealSize() {
+    const rootWidth = this.base_element.offsetWidth;
+    const rootHeight = this.base_element.offsetHeight;
+
+    const charWidth = this.cursor_element.offsetWidth;
+    const charHeight = this.cursor_element.offsetHeight;
+    return [
+      Math.floor(rootWidth / charWidth),
+      Math.floor(rootHeight / charHeight)
+    ]
   }
 
   set_cursor(x: number, y: number) {

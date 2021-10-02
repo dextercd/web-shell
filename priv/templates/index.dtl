@@ -24,6 +24,11 @@ html {
     outline: solid #ff7272;
 }
 
+#base {
+    overflow: hidden;
+    resize: vertical;
+}
+
 .cursor {
     background: white;
     animation: blink .75s ease-in-out infinite alternate;

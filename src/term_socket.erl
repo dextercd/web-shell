@@ -17,15 +17,23 @@ websocket_init(no_terminal) ->
     Terminal = pty_manager_server:create_terminal(),
     {ok, Terminal}.
 
-websocket_handle({binary, Data}, Terminal) ->
+websocket_handle({binary, <<$w, Data/binary>>}, Terminal) ->
     pty_manager_server:terminal_input(Terminal, Data),
+    {ok, Terminal};
+websocket_handle({binary, <<$r, Width:32, Height:32>>}, Terminal) ->
+    pty_manager_server:terminal_resize(Terminal, Width, Height),
     {ok, Terminal};
 websocket_handle(_, Terminal) ->
     {ok, Terminal}.
 
+websocket_info({terminal_resize, Terminal, {Width, Height}}, Terminal) ->
+    {
+        [{binary, [$r, <<Width:32, Height:32>>]}],
+        Terminal
+    };
 websocket_info({terminal_output, Terminal, Output}, Terminal) ->
     {
-        [{binary, Output}],
+        [{binary, [$o, Output]}],
         Terminal
     }.
 

@@ -117,6 +117,23 @@ ssize_t write_full(int const fd, void const* buffer, std::size_t const original_
     return original_count;
 }
 
+std::uint32_t read_be_u32(char unsigned const* const bytes)
+{
+    return
+        std::uint32_t{bytes[0]} << 24 |
+        std::uint32_t{bytes[1]} << 16 |
+        std::uint32_t{bytes[2]} << 8  |
+        std::uint32_t{bytes[3]} << 0;
+}
+
+void write_be_u32(char* const bytes, std::uint32_t value)
+{
+    bytes[0] = (value << 24) & 0xff;
+    bytes[1] = (value << 16) & 0xff;
+    bytes[2] = (value <<  8) & 0xff;
+    bytes[3] = (value <<  0) & 0xff;
+}
+
 std::uint32_t read_input_size()
 {
     unsigned char bytes[4];
@@ -124,11 +141,22 @@ std::uint32_t read_input_size()
     if (size_read == -1)
         fatal("stdin read error.");
 
-    return
-        std::uint32_t{bytes[0]} << 24 |
-        std::uint32_t{bytes[1]} << 16 |
-        std::uint32_t{bytes[2]} << 8  |
-        std::uint32_t{bytes[3]} << 0;
+    return read_be_u32(bytes);
+}
+
+void notify_resize(int master_fd, pid_t pid, std::uint32_t width, std::uint32_t height)
+{
+    static_assert(sizeof(master_fd) == 4);
+    static_assert(sizeof(pid) == 4);
+    char data[21];
+    std::uint32_t message_size = sizeof(data) - sizeof(message_size);
+    write_be_u32(data, message_size);
+    data[4] = 'r';
+    std::memcpy(data + 5, &master_fd, sizeof(master_fd));
+    std::memcpy(data + 9, &pid, sizeof(pid));
+    write_be_u32(data + 13, width);
+    write_be_u32(data + 17, height);
+    write_full(output_fd, data, sizeof(data));
 }
 
 [[noreturn]]
@@ -276,10 +304,7 @@ void process_input()
             /* pid             */ 0, 0, 0, 0};
 
         std::uint32_t message_size = sizeof(response) - 4;
-        response[0] = (message_size >> 24) & 0xff;
-        response[1] = (message_size >> 16) & 0xff;
-        response[2] = (message_size >> 8)  & 0xff;
-        response[3] = (message_size >> 0)  & 0xff;
+        write_be_u32(response, message_size);
 
         std::memcpy(response + 5, read_buffer.get() + 1, 4);
         std::memcpy(response + 9, &fd, 4);
@@ -313,6 +338,21 @@ void process_input()
         if (child_it != std::end(child_processes)) {
             kill(child_it->pid, SIGTERM);
         }
+    } else if (read_buffer[0] == 'r') { // resize
+        int master_fd;
+        pid_t pid;
+        std::memcpy(&master_fd, read_buffer.get() + 1, sizeof(master_fd));
+        std::memcpy(&pid, read_buffer.get() + 5, sizeof(pid));
+
+        auto width = read_be_u32(read_buffer.get() + 9);
+        auto height = read_be_u32(read_buffer.get() + 13);
+        auto const winsz = winsize{
+            static_cast<unsigned short>(height),
+            static_cast<unsigned short>(width),
+            0, 0
+        };
+        ioctl(master_fd, TIOCSWINSZ, &winsz);
+        notify_resize(master_fd, pid, width, height);
     } else {
         fatal("Unknown message.");
     }

@@ -4,7 +4,8 @@
 
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2]).
 
--export([start_link/0, create_terminal/0, terminal_input/2, close_terminal/1]).
+-export([start_link/0, create_terminal/0, terminal_input/2, terminal_resize/3,
+    close_terminal/1]).
 
 -record(state,
     {
@@ -21,6 +22,9 @@ create_terminal() ->
 
 terminal_input(Terminal, Data) ->
     gen_server:cast(?MODULE, {terminal_input, Terminal, Data}).
+
+terminal_resize(Terminal, Width, Height) ->
+    gen_server:cast(?MODULE, {terminal_resize, Terminal, Width, Height}).
 
 close_terminal(Terminal) ->
     gen_server:cast(?MODULE, {close_terminal, Terminal}).
@@ -68,6 +72,15 @@ handle_cast({terminal_input, {TerminalId, _}=Terminal, Data},
             false
     end,
     {noreply, State};
+handle_cast({terminal_resize, {TerminalId, _}=Terminal, Width, Height},
+            #state{port=Port} = State) ->
+    case check_session(Terminal, State) of
+        true ->
+            Port ! {self(), {command, <<"r", TerminalId/binary, Width:32, Height:32>>}};
+        false ->
+            false
+    end,
+    {noreply, State};
 handle_cast({close_terminal, {TerminalId, _}=Terminal},
             #state{port=Port} = State) ->
     case check_session(Terminal, State) of
@@ -78,7 +91,6 @@ handle_cast({close_terminal, {TerminalId, _}=Terminal},
     end,
     {noreply, State}.
 
-% Terminal Output
 handle_info({Port, {data, <<MessageType, TerminalId:8/binary, Data/binary>>}},
             #state{port=Port, terminal_owners=Owners}=State) ->
     #{TerminalId := {Owner, SessionKey}} = Owners,
@@ -86,6 +98,11 @@ handle_info({Port, {data, <<MessageType, TerminalId:8/binary, Data/binary>>}},
         % Terminal Output
         {$o, <<Output/binary>>} ->
             Owner ! {terminal_output, {TerminalId, SessionKey}, Output},
+            {noreply, State};
+
+        % Terminal Resize
+        {$r, <<Width:32, Height:32>>} ->
+            Owner ! {terminal_resize, {TerminalId, SessionKey}, {Width, Height}},
             {noreply, State};
 
         % Terminal Exit
