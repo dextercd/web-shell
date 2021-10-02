@@ -265,10 +265,10 @@ terminalElement.addEventListener('keydown', event => {
 // I sometimes accidentally use a hotkey that closes the tab, such as C-w in Vim
 // to manipulate windows. Make sure the user actually wants to leave the site.
 window.addEventListener('beforeunload', function (e) {
-    e.preventDefault();
-    e.returnValue =
-        'Are you sure you want to close the terminal? ' +
-        'Unsaved changes will be lost.';
+  e.preventDefault();
+  e.returnValue =
+    'Are you sure you want to close the terminal? ' +
+    'Unsaved changes will be lost.';
 });
 
 })()

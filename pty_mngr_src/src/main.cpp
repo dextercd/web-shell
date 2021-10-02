@@ -322,7 +322,6 @@ void process_input()
         write_full(master_fd, read_buffer.get() + 9, input_size - 9);
         // No error handling here because the process may have been stopped already
     } else if (read_buffer[0] == 'k') { // kill
-
         int master_fd;
         pid_t pid;
         std::memcpy(&master_fd, read_buffer.get() + 1, sizeof(master_fd));
