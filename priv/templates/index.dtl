@@ -86,6 +86,7 @@ article {
             <li>Standard Unix tools (cat, ls, etc..)
             <li>Bash
             <li>ShellCheck
+            <li>Telnet
             <li>SSH
             <li>tmux
             <li>Git

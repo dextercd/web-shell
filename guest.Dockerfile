@@ -25,6 +25,7 @@ RUN apt-get install         \
     --assume-yes            \
     --no-install-recommends \
     ca-certificates         \
+    telnet                  \
     ssh-client              \
     curl                    \
     neofetch                \
