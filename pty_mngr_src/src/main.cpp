@@ -474,8 +474,6 @@ int main()
     configure_signals();
 
     while(true) {
-        bool child_terminated = false;
-
         epoll_event triggered_events[10];
         auto const wait_result = epoll_wait(
             epoll_fd, triggered_events, std::size(triggered_events), -1);
@@ -490,6 +488,7 @@ int main()
             fatal_with_error("epoll_wait failed.", err);
         }
 
+        bool child_terminated = false;
         for (auto i = 0; i != wait_result; ++i) {
             auto const& current_event = triggered_events[i];
 
