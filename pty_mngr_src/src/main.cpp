@@ -172,7 +172,7 @@ void setup_child(int slave_fd)
 
     close(0); close(1); close(2);
     dup2(slave_fd, 0); dup2(slave_fd, 1); dup2(slave_fd, 2);
-    setenv("TERM", "katerm", 1);
+    setenv("TERM", "katerm-color", 1);
 
     std::cout <<
       R"(     xxx          )"  "\n"
