@@ -198,7 +198,7 @@ void setup_child(int slave_fd)
     // Arguments passed into execvp must be writable, so we need an intermediate
     // mutable array.
 
-#if 0
+#if 1
     char command[] = "fish";
 
     char mutable_args[][20]{
