@@ -215,7 +215,7 @@ void setup_child(int slave_fd)
         "--workdir", "/home/guest",
         "--hostname", "webshell",
 
-        "-e", "TERM=katerm",
+        "-e", "TERM=katerm-color",
 
         "--memory=200M",
         "--cpus=0.5",
