@@ -9,24 +9,28 @@ if (terminalElement === null)
 const terminal = new DOMTerminal(terminalElement);
 await terminal.init();
 
-const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-
 // Create WebSocket connection.
+const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
 const socket = new WebSocket(`${protocol}://${window.location.host}/terminal`);
 
-function recalculateTerminalSize() {
-  const [width, height] = terminal.getIdealSize()
-  console.log(`Resize request to ${width} by ${height}.`)
-  sendResize(width, height)
+let pendingWidth = terminal.width;
+let pendingHeight = terminal.height;
+
+function requestIdealTerminalSize() {
+  const [width, height] = terminal.getIdealSize();
+  if (pendingWidth !== width || pendingHeight != height) {
+    console.log(`Resize request to ${width} by ${height}.`);
+    sendResizeRequest(width, height);
+  }
 }
 
 const resizeObserver = new ResizeObserver(() => {
-  recalculateTerminalSize()
+  requestIdealTerminalSize();
 })
 
 // Connection opened
 socket.addEventListener('open', function (event) {
-  recalculateTerminalSize()
+  requestIdealTerminalSize();
   resizeObserver.observe(terminalElement);
 });
 
@@ -80,6 +84,10 @@ function handleResize(width: number, height: number) {
   terminal.resize(width, height);
   terminal.process_done();
   console.log(`Resized to ${width} by ${height}.`)
+
+  // The resize value we receive may be out of date with the current size of the
+  // terminal.  If that is the case make a new request for a terminal resize.
+  requestIdealTerminalSize()
 }
 
 const responseOutput = 111; // o
@@ -136,13 +144,16 @@ function sendInput(data: Uint8Array) {
   socket.send(buffer);
 }
 
-function sendResize(width: number, height: number) {
+function sendResizeRequest(width: number, height: number) {
   const buffer = new ArrayBuffer(1 + 2 * 4);
   const view = new DataView(buffer);
   view.setUint8(0, socketResizeTerminal);
   view.setUint32(1, width);
   view.setUint32(5, height);
   socket.send(buffer);
+
+  pendingWidth = width;
+  pendingHeight = height;
 }
 
 // Periodic ping
