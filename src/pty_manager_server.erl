@@ -32,8 +32,10 @@ close_terminal(Terminal) ->
 start_manager_program() ->
     PrivDir = code:priv_dir(web_shell),
     PortPath = filename:join([PrivDir, "pty_mngr/pty_mngr"]),
+    {ok, PtyPassword} = application:get_env(password),
     Port = erlang:open_port({spawn_executable, PortPath},
-                            [{packet, 4}, binary, exit_status]),
+                            [{packet, 4}, binary, exit_status,
+                             {env, [{"PTY_PASS", PtyPassword}]}]),
     Port.
 
 init(_) ->

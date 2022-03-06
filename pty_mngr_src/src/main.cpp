@@ -192,7 +192,8 @@ void setup_child(int slave_fd)
         std::string given;
         std::getline(std::cin, given);
 
-        if (given == "youshouldnthardcodepasswords :^)")
+        auto const password = getenv("PTY_PASS");
+        if (password != nullptr && given == password)
             break;
     }
 
