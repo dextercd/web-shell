@@ -1,0 +1,5 @@
+[
+    {web_shell, [
+        {password, "${PTY_PASSWORD}"}
+    ]}
+].
