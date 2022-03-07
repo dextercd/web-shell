@@ -108,9 +108,10 @@ export class DOMTerminal extends BaseTerminal {
     const charRect = this.cursor_element.getClientRects()[0];
     const charWidth = charRect.width;
     const charHeight = charRect.height;
+
     return [
-      Math.floor(rootWidth / charWidth),
-      Math.floor(rootHeight / charHeight)
+      Math.max(1, Math.floor(rootWidth / charWidth)),
+      Math.max(1, Math.floor(rootHeight / charHeight))
     ]
   }
 
@@ -138,6 +139,9 @@ export class DOMTerminal extends BaseTerminal {
   }
 
   set_size(width: number, height: number) {
+    if (width <= 0 || height <= 0)
+      throw RangeError("Terminal width and height must be positive.");
+
     if (this.width != width || this.height != height) {
       this.width = width;
       this.height = height;
